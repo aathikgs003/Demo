@@ -1,0 +1,78 @@
+import React, { useState } from "react";
+
+function App() {
+  const [items, setItems] = useState([]);
+  const [formData, setFormData] = useState({ name: "", email: "", age: "" });
+  const [editIndex, setEditIndex] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const addItem = (e) => {
+    e.preventDefault();
+    const { name, email, age } = formData;
+    if (!name.trim() || !email.trim() || !age.trim()) return;
+
+    if (editIndex !== null) {
+      const updated = [...items];
+      updated[editIndex] = formData;
+      setItems(updated);
+      setEditIndex(null);
+    } else {
+      setItems([...items, formData]);
+    }
+    setFormData({ name: "", email: "", age: "" });
+  };
+
+  const editItem = (index) => {
+    setFormData(items[index]);
+    setEditIndex(index);
+  };
+
+  const deleteItem = (index) => {
+    setItems(items.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div>
+      <h2>Simple CRUD App (Multiple Inputs)</h2>
+      <form onSubmit={addItem}>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Enter name"
+        />
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Enter email"
+        />
+        <input
+          type="number"
+          name="age"
+          value={formData.age}
+          onChange={handleChange}
+          placeholder="Enter age"
+        />
+        <button type="submit">{editIndex !== null ? "Update" : "Add"}</button>
+      </form>
+
+      <ul>
+        {items.map((item, index) => (
+          <li key={index}>
+            Name: {item.name}, Email: {item.email}, Age: {item.age}{" "}
+            <button onClick={() => editItem(index)}>Edit</button>{" "}
+            <button onClick={() => deleteItem(index)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
